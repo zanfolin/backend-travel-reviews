@@ -1,0 +1,114 @@
+Project AccessTrip {
+  database_type: "SQLite"
+  Note: 'Plataforma de turismo acessível para viajantes encontrarem e avaliarem estabelecimentos e atrações turísticas.'
+}
+
+Enum user_type_enum {
+  TRAVELER
+  BUSINESS
+}
+
+Enum category_enum {
+  ACCOMMODATION
+  GASTRONOMY
+  TOURIST_ATTRACTION
+  OTHERS
+}
+
+Enum accessibility_level_enum {
+  POOR
+  GOOD
+  EXCELLENT
+}
+
+/*
+  O usuário se cadastra no sistema, o backend envia um código de verificação para o e-mail do usuário. O usuário deve inserir esse código para verificar seu e-mail.
+   O código de verificação é armazenado no banco de dados e é válido por 24 horas. Após a verificação, o campo email_verified é atualizado para 1 e o código
+    de verificação é removido do banco de dados, depois disso o usuário pode acessar a plataforma mobile e web.
+*/
+
+Table users {
+  id integer [pk, increment]
+  full_name text [note: 'Nome completo do usuário - preenchimento depois do cadastro']
+  email text [not null, unique, note: 'E-mail do usuário, usado para login e comunicação']
+  password text [not null, note: 'Senha armazenada de forma criptografada']
+  email_verified integer [not null, default: 0, note: 'Indica se o e-mail do usuário foi verificado (0 = não verificado, 1 = verificado)']
+  email_code text [note: 'Código de verificação enviado para o e-mail do usuário - quatro dígitos']
+  user_type user_type_enum [not null, note: 'Tipo de usuário: viajante ou empresa']
+  profile_picture text [note: 'URL ou caminho da foto do perfil']
+  created_at text [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at text [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    email [name: 'idx_users_email']
+    full_name [name: 'idx_users_full_name']
+    user_type [name: 'idx_users_user_type']
+  }
+
+  records (email, password, user_type) {
+    'admin@admin.com', 'admin123', 'BUSINESS'
+  }
+}
+
+Table places {
+  id integer [pk, increment]
+  business_owner_id integer [not null, ref: > users.id]
+  establishment_name text [not null, note: 'Nome do estabelecimento ou ponto turístico']
+  category category_enum [not null, note: 'Categoria do local']
+  full_address text [not null, note: 'Endereço completo do local em texto único - é um contrasenso mas simplificado o endereço completo em um único campo']
+  city text [not null, note: 'Cidade do local']
+  state text [not null, note: 'Estado do local']
+  description text [note: 'Descrição detalhada do local, incluindo informações que não são selecionaveis, serviços oferecidos e outras características relevantes']
+  price numeric [note: 'Preço principal do serviço em centavos']
+  main_image text [note: 'URL ou caminho da imagem principal do local']
+
+  // Informações de acessibilidade
+  has_access_ramp integer [not null, default: 0, note: 'Possui rampa de acesso: 0 = não, 1 = sim']
+  has_adapted_bathroom integer [not null, default: 0, note: 'Possui banheiro adaptado. 0 = não, 1 = sim']
+  allows_guide_dog integer [not null, default: 0, note: 'Permite a entrada de cão-guia: 0 = não, 1 = sim']
+  has_braille_signage integer [not null, default: 0, note: 'Possui sinalização em Braille: 0 = não, 1 = sim']
+  has_sign_language_interpreter integer [not null, default: 0, note: 'Possui intérprete de Libras: 0 = não, 1 = sim']
+  has_asd_friendly_space integer [not null, default: 0, note: 'Possui espaço adequado para pessoas com TEA: 0 = não, 1 = sim']
+
+  created_at text [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at text [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    establishment_name [name: 'idx_places_establishment_name']
+    city [name: 'idx_places_city']
+    state [name: 'idx_places_state']
+    category [name: 'idx_places_category']
+    description [name: 'idx_places_description']
+    price [name: 'idx_places_price']
+  }
+
+  records (business_owner_id, establishment_name, category, full_address, city, state, description, price, main_image, has_access_ramp, has_adapted_bathroom, allows_guide_dog, has_braille_signage, has_sign_language_interpreter, has_asd_friendly_space) {
+    1, 'Hotel Unique', 'ACCOMMODATION', 'Avenida Brigadeiro Luís Antônio 4700 - Jardim Paulista', 'São Paulo', 'SP', 'Hotel de luxo em São Paulo com estrutura completa e localização próxima ao Parque Ibirapuera e à Avenida Paulista.', 120000, 'https://www.hotelunique.com.br/', 1, 1, 1, 1, 0, 1
+    1, 'Restaurante A Figueira Rubaiyat', 'GASTRONOMY', 'Rua Haddock Lobo 1738 - Jardim Paulista', 'São Paulo', 'SP', 'Restaurante conhecido por sua gastronomia e por seu amplo salão integrado a uma grande figueira centenária.', 15000, 'https://www.rubaiyat.com.br/', 1, 1, 1, 0, 0, 1
+    1, 'MASP - Museu de Arte de São Paulo', 'TOURIST_ATTRACTION', 'Avenida Paulista 1578 - Bela Vista', 'São Paulo', 'SP', 'Um dos principais museus de arte do Brasil, localizado na Avenida Paulista e conhecido por seu acervo e exposições.', 7000, 'https://masp.org.br/', 1, 1, 1, 1, 1, 1
+    1, 'Parque Ibirapuera', 'TOURIST_ATTRACTION', 'Avenida Pedro Álvares Cabral - Vila Mariana', 'São Paulo', 'SP', 'Um dos parques mais conhecidos de São Paulo, com áreas verdes, espaços culturais, trilhas e opções de lazer.', 0, 'https://www.parquedoibirapuera.org/', 1, 1, 1, 0, 0, 1
+    1, 'Pinacoteca de São Paulo', 'TOURIST_ATTRACTION', 'Praça da Luz 2 - Luz', 'São Paulo', 'SP', 'Museu de arte localizado no centro de São Paulo com importante acervo de arte brasileira e exposições temporárias.', 3000, 'https://pinacoteca.org.br/', 1, 1, 1, 1, 1, 1
+  }
+}
+
+Table reviews {
+  id integer [pk, increment]
+  place_id integer [not null, ref: > places.id]
+  traveler_id integer [not null, ref: > users.id]
+  experience_rating integer [not null, note: 'Nota da experiência de 1 a 5', checks: 'experience_rating >= 1 AND experience_rating <= 5']
+  accessibility_level accessibility_level_enum [not null, note: 'Avaliação da acessibilidade do local']
+  comment_text text [note: 'Comentário do viajante']
+  owner_reply_text text [note: 'Resposta do proprietário']
+  created_at text [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at text [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    place_id [name: 'idx_reviews_place_id']
+    traveler_id [name: 'idx_reviews_traveler_id']
+    experience_rating [name: 'idx_reviews_experience_rating']
+    accessibility_level [name: 'idx_reviews_accessibility_level']
+    comment_text [name: 'idx_reviews_comment_text']
+  }
+}
+
+//Todos os atributos updated_at devem ser atualizado por triggers no banco de dados, para que não seja necessário atualizar manualmente no backend.
