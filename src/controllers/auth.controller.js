@@ -57,6 +57,10 @@ export async function register(req, res, next) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationCode = generate4DigitCode();
 
+    console.log('\n======================================================');
+    console.log(`🔑 [AUTH DEV] Código de verificação para ${email} (${normalizedUserType}): [ ${verificationCode} ]`);
+    console.log('======================================================\n');
+
     const [userId] = await db('users').insert({
       email: email.toLowerCase().trim(),
       password: hashedPassword,
@@ -183,6 +187,11 @@ export async function resendVerificationCode(req, res, next) {
     }
 
     const newCode = generate4DigitCode();
+
+    console.log('\n======================================================');
+    console.log(`🔑 [AUTH DEV] Novo código de verificação para ${user.email}: [ ${newCode} ]`);
+    console.log('======================================================\n');
+
     await db('users').where({ id: user.id }).update({
       email_code: newCode
     });

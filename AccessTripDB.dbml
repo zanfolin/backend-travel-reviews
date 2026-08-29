@@ -1,4 +1,4 @@
-Project AccessTrip {
+Project AccessTripDB {
   database_type: "SQLite"
   Note: 'Plataforma de turismo acessível para viajantes encontrarem e avaliarem estabelecimentos e atrações turísticas.'
 }

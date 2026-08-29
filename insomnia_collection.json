@@ -1,0 +1,1052 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: AccessTrip API
+meta:
+  id: wrk_1c458ef412944b6bb1b9c8074ba9f4bf
+  created: 1787998264857
+  modified: 1787998264857
+  description: ""
+collection:
+  - name: 4. Avaliações (Reviews)
+    meta:
+      id: fld_117f689fc0d2436c883cb077520b0fe1
+      created: 1724926500000
+      modified: 1788002032510
+      sortKey: 500
+      description: Avaliações por viajantes (TRAVELER) e respostas de estabelecimentos
+        (BUSINESS)
+    children:
+      - url: "{{ _.base_url }}/reviews/{{ _.review_id }}"
+        name: 4.3 Editar Minha Avaliação (Exclusivo TRAVELER)
+        meta:
+          id: req_37ad6bc2c9d34d6396f2182be8b88588
+          created: 1724926500000
+          modified: 1788001967046
+          isPrivate: false
+          description: Permite ao viajante autor editar sua nota e comentário.
+          sortKey: 503
+        method: PUT
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "experience_rating": 5,
+              "accessibility_level": "EXCELLENT",
+              "comment_text": "Atualizando: Visitei novamente e continuam com um atendimento nota 10 para acessibilidade!"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_e3c283974ad8461082c274cc55dc08c5',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places/{% prompt 'AccessTripDB', 'Entre com o ID do
+          Estabelecimento', '10', '', false, true %}/reviews"
+        name: 4.1 Listar Avaliações de um Local
+        meta:
+          id: req_776f6f2b3b69488ca9fd5581599465c9
+          created: 1724926500000
+          modified: 1788001621268
+          isPrivate: false
+          description: Lista todas as avaliações e comentários recebidos por um
+            estabelecimento.
+          sortKey: 501
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/reviews/{{ _.review_id }}"
+        name: 4.4 Excluir Minha Avaliação (Exclusivo TRAVELER)
+        meta:
+          id: req_8f5a4d187e0d43c1b25a6e45e696ea3f
+          created: 1724926500000
+          modified: 1788001971681
+          isPrivate: false
+          description: Permite ao viajante autor remover sua avaliação.
+          sortKey: 504
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_e3c283974ad8461082c274cc55dc08c5',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places/{% prompt 'AccessTripDB', 'Entre com o ID do
+          Estabelecimento', '10', '', false, true %}/reviews"
+        name: 4.2 Criar Avaliação (Exclusivo TRAVELER)
+        meta:
+          id: req_aea07d7629aa4bf4933172ba8e271ea4
+          created: 1724926500000
+          modified: 1788002030538
+          isPrivate: false
+          description: Publica uma avaliação. Apenas usuários do tipo TRAVELER têm
+            permissão.
+          sortKey: 502
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "experience_rating": {{ randomAvaliacao }},
+              "accessibility_level": "{{ randomNivelAcessibilidade }}",
+              "comment_text": "{% faker 'randomJobDescriptor' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_e3c283974ad8461082c274cc55dc08c5',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        scripts:
+          preRequest: >-
+            const bit = Math.round(Math.random());
+
+            const randInt = (min, max) => Math.floor(Math.random() * (max - min
+            + 1)) + min;
+
+            const randDec = (min, max, casas = 2) =>
+              (Math.random() * (max - min) + min).toFixed(casas);
+
+            // sorteia um item de qualquer array
+
+            const randItem = (lista) => lista[Math.floor(Math.random() *
+            lista.length)];
+
+
+            const CATEGORIAS = [
+              'ACCOMMODATION',
+              'GASTRONOMY',
+              'TOURIST_ATTRACTION',
+              'OTHERS'
+            ];
+
+
+            const STATES = [
+              'sp',
+              'RJ',
+              'PR',
+              'SC',
+            	'MG',
+            	'MT',
+            	'MS'
+            ];
+
+
+
+            const ACCESSIBILITY_LEVEL = [
+              'POOR',
+              'GOOD',
+              'EXCELLENT'
+            ];
+
+
+            insomnia.environment.set('randomBit', bit);
+
+            insomnia.environment.set('randomPreco', randDec(100, 500, 2));
+
+            insomnia.environment.set('randomAvaliacao', randInt(1, 5));
+
+            insomnia.environment.set('randomCategoria', randItem(CATEGORIAS));
+
+            insomnia.environment.set('randomCidade', randItem(STATES));
+
+            insomnia.environment.set('randomNivelAcessibilidade',
+            randItem(ACCESSIBILITY_LEVEL));
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/reviews/{% prompt 'AccessTripDB', 'Entre com o ID do
+          Comentário', '3', '', false, true %}/reply"
+        name: 4.5 Responder Avaliação (Exclusivo BUSINESS)
+        meta:
+          id: req_ce6e4c4389714a7aabef83f105b8700f
+          created: 1724926500000
+          modified: 1788002177391
+          isPrivate: false
+          description: Permite ao proprietário do estabelecimento responder à avaliação de
+            um viajante.
+          sortKey: 505
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "owner_reply_text": "{% faker 'randomCatchPhraseDescriptor' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_eb20f0bc69f14e7aadad25fb6c690c47',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 1. Autenticação & Verificação
+    meta:
+      id: fld_238dd3e240324ba6ae829ca18ddb8541
+      created: 1724926500000
+      modified: 1724926500000
+      sortKey: 200
+      description: Cadastro, login e validação de e-mail (código de 4 dígitos)
+    children:
+      - url: "{{ _.base_url }}/auth/me"
+        name: 1.7 Obter Dados da Sessão (/me)
+        meta:
+          id: req_7e3cf30402954e57b0131504d93d3ee0
+          created: 1724926500000
+          modified: 1788000101655
+          isPrivate: false
+          description: |-
+            Retorna o usuário autenticado atual pelo token JWT.
+
+            Me parece que funciona somente com o BUSINESS
+          sortKey: 207
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_eb20f0bc69f14e7aadad25fb6c690c47',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/auth/resend-code"
+        name: 1.4 Reenviar Código de Verificação
+        meta:
+          id: req_96a22ce945a84f578b99c5ea04943d54
+          created: 1724926500000
+          modified: 1724926500000
+          isPrivate: false
+          description: Gera um novo código de 4 dígitos e envia para o e-mail do usuário.
+          sortKey: 204
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "carlos@exemplo.com"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/auth/verify-email"
+        name: 1.3 Verificar E-mail com Código
+        meta:
+          id: req_c740a2734b274c69a9b90f407b805d85
+          created: 1724926500000
+          modified: 1787998705599
+          isPrivate: false
+          description: Valida o código de 4 dígitos (válido por 24h), libera acesso e
+            retorna token JWT.
+          sortKey: 203
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "email": "{% response 'body', 'req_ef489b8e8b4b4caf8b9210c210f2116e', 'b64::JC5lbWFpbA==::46b', 'never', 60 %}",
+              "code": "9799"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/auth/register"
+        name: 1.2 Cadastrar Nova Empresa (BUSINESS)
+        meta:
+          id: req_e2f9626336fb49eb9cebd47917ed0d36
+          created: 1724926500000
+          modified: 1787999078597
+          isPrivate: false
+          description: >-
+            Cadastra uma empresa. Gera código de 4 dígitos enviado por e-mail.
+
+             "user_type": "BUSINESS" deve ser inserido pelo frontend e não solicitado ao usuário
+          sortKey: 202
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "full_name": "{% faker 'randomBsBuzz' %}",
+              "email": "{% faker 'randomEmail' %}",
+              "password": "senha123",
+              "user_type": "BUSINESS"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/auth/login"
+        name: 1.6 Login - Traveler (Viajante)
+        meta:
+          id: req_e3c283974ad8461082c274cc55dc08c5
+          created: 1724926500000
+          modified: 1787998957251
+          isPrivate: false
+          description: >-
+            Login com a conta inicial de Viajante (traveler@traveler.com). Copie
+            o token retornado para a variável de ambiente token_traveler.
+
+             "expected_role": "TRAVELER" é enviado pelo frontend e não solicitado para o usuário
+          sortKey: 206
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "email": "{% response 'body', 'req_ef489b8e8b4b4caf8b9210c210f2116e', 'b64::JC5lbWFpbA==::46b', 'never', 60 %}",
+              "password": "senha123",
+              "expected_role": "TRAVELER"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/auth/login"
+        name: 1.5 Login - Business (Empresa)
+        meta:
+          id: req_eb20f0bc69f14e7aadad25fb6c690c47
+          created: 1724926500000
+          modified: 1787999131246
+          isPrivate: false
+          description: Login com a conta inicial de Empresa (admin@admin.com). Copie o
+            token retornado para a variável de ambiente token_business.
+          sortKey: 205
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "email": "{% response 'body', 'req_e2f9626336fb49eb9cebd47917ed0d36', 'b64::JC5lbWFpbA==::46b', 'never', 60 %}",
+              "password": "senha123",
+              "expected_role": "BUSINESS"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/auth/register"
+        name: 1.1 Cadastrar Novo Viajante (TRAVELER)
+        meta:
+          id: req_ef489b8e8b4b4caf8b9210c210f2116e
+          created: 1724926500000
+          modified: 1787998326280
+          isPrivate: false
+          description: Cadastra um viajante. Gera código de 4 dígitos enviado por e-mail.
+          sortKey: 201
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "full_name": "{% faker 'randomFullName' %}",
+              "email": "{% faker 'randomEmail' %}",
+              "password": "senha123",
+              "user_type": "TRAVELER"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/auth/verify-email"
+        name: 1.3 Verificar E-mail com Código Adm
+        meta:
+          id: req_591517052b6743cfad93fbf251456970
+          created: 1787999152532
+          modified: 1787999169714
+          isPrivate: false
+          description: Valida o código de 4 dígitos (válido por 24h), libera acesso e
+            retorna token JWT.
+          sortKey: 203.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "email": "{% response 'body', 'req_e2f9626336fb49eb9cebd47917ed0d36', 'b64::JC5lbWFpbA==::46b', 'never', 60 %}",
+              "code": "9039"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 3. Locais & Acessibilidade
+    meta:
+      id: fld_7202321c1ccd44fb8bdbdc87f92adbe5
+      created: 1724926500000
+      modified: 1788001548561
+      sortKey: 400
+      description: Busca, listagem com filtros de acessibilidade e CRUD de estabelecimentos
+    children:
+      - url: "{{ _.base_url }}/places"
+        name: 3.1 Listar Todos os Locais
+        meta:
+          id: req_049f268ad79a4983bcaf3cca0402e66b
+          created: 1724926500000
+          modified: 1724926500000
+          isPrivate: false
+          description: Listagem pública com cálculo de média de avaliações e total de
+            reviews.
+          sortKey: 401
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places/{% prompt 'AccessTripDB', 'Entre com o ID do
+          Estabelecimento', '10', '', false, true %}"
+        name: 3.5 Atualizar Estabelecimento (Exclusivo BUSINESS)
+        meta:
+          id: req_3931b8e305544f5e8030019c73373261
+          created: 1724926500000
+          modified: 1788002115648
+          isPrivate: false
+          description: Atualiza os dados de um local. Permitido somente ao proprietário
+            daquele local.
+          sortKey: 405
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "price": {{ randomPreco }},
+              "description": "{% faker 'randomJobDescriptor' %}",
+              "has_sign_language_interpreter": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_eb20f0bc69f14e7aadad25fb6c690c47',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        scripts:
+          preRequest: >-
+            const bit = Math.round(Math.random());
+
+            const randInt = (min, max) => Math.floor(Math.random() * (max - min
+            + 1)) + min;
+
+            const randDec = (min, max, casas = 2) =>
+              (Math.random() * (max - min) + min).toFixed(casas);
+
+            // sorteia um item de qualquer array
+
+            const randItem = (lista) => lista[Math.floor(Math.random() *
+            lista.length)];
+
+
+            const CATEGORIAS = [
+              'ACCOMMODATION',
+              'GASTRONOMY',
+              'TOURIST_ATTRACTION',
+              'OTHERS'
+            ];
+
+
+            const STATES = [
+              'sp',
+              'RJ',
+              'PR',
+              'SC',
+            	'MG',
+            	'MT',
+            	'MS'
+            ];
+
+
+
+            insomnia.environment.set('randomBit', bit);
+
+            insomnia.environment.set('randomPreco', randDec(100, 500, 2));
+
+            insomnia.environment.set('randomCategoria', randItem(CATEGORIAS));
+
+            insomnia.environment.set('randomCidade', randItem(STATES));
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places/{% prompt 'AccessTrip', 'Entre com o ID do
+          Negócio', '1', '', false, true %}"
+        name: 3.3 Obter Detalhes do Local por ID
+        meta:
+          id: req_5b79ef7a471049bea8fd7402291a937f
+          created: 1724926500000
+          modified: 1787999803176
+          isPrivate: false
+          description: Retorna informações completas do estabelecimento, estatísticas
+            detalhadas de acessibilidade e lista de avaliações.
+          sortKey: 403
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places"
+        name: 3.2 Listar com Filtros de Acessibilidade
+        meta:
+          id: req_6173cf52e84f4433ba5a31b4090918de
+          created: 1724926500000
+          modified: 1788001476469
+          isPrivate: false
+          description: Filtros por categoria, cidade, rampa, banheiro adaptado, cão-guia,
+            Libras, TEA e ordenação por melhor avaliação.
+          sortKey: 402
+        method: GET
+        parameters:
+          - name: category
+            value: "{{ randomCategoria }}"
+            disabled: true
+          - name: city
+            value: "{{ randomCidade }}"
+            disabled: true
+          - name: has_access_ramp
+            value: "{{ randomBit }}"
+            disabled: true
+          - name: has_adapted_bathroom
+            value: "{{ randomBit }}"
+            disabled: true
+          - name: has_asd_friendly_space
+            value: "{{ randomBit }}"
+            disabled: true
+          - name: has_sign_language_interpreter
+            value: "{{ randomBit }}"
+            description: ""
+            disabled: true
+          - name: sort_by
+            value: rating_desc
+            disabled: true
+          - name: business_owner_id
+            value: "5"
+            description: ""
+            disabled: false
+        scripts:
+          preRequest: >-
+            const bit = Math.round(Math.random());
+
+            const randInt = (min, max) => Math.floor(Math.random() * (max - min
+            + 1)) + min;
+
+            const randDec = (min, max, casas = 2) =>
+              (Math.random() * (max - min) + min).toFixed(casas);
+
+            // sorteia um item de qualquer array
+
+            const randItem = (lista) => lista[Math.floor(Math.random() *
+            lista.length)];
+
+
+            const CATEGORIAS = [
+              'ACCOMMODATION',
+              'GASTRONOMY',
+              'TOURIST_ATTRACTION',
+              'OTHERS'
+            ];
+
+
+            const STATES = [
+              'SP',
+              'RJ',
+              'PR',
+              'SC',
+            	'MG',
+            	'MT',
+            	'MS'
+            ];
+
+
+
+            insomnia.environment.set('randomBit', bit);
+
+            insomnia.environment.set('randomPreco', randDec(100, 500, 2));
+
+            insomnia.environment.set('randomCategoria', randItem(CATEGORIAS));
+
+            insomnia.environment.set('randomCidade', randItem(STATES));
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places"
+        name: 3.4 Criar Novo Estabelecimento (Exclusivo BUSINESS)
+        meta:
+          id: req_bd0e36cb2ccd41cab167f8196e480e57
+          created: 1724926500000
+          modified: 1788001406296
+          isPrivate: false
+          description: Cadastra um local. Apenas usuários do tipo BUSINESS podem criar.
+          sortKey: 404
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "establishment_name": "Aquário Municipal Acessível",
+              "category": "{{ randomCategoria }}",
+              "full_address": "Avenida do Mar, 500 - Centro",
+              "city": "{% faker 'randomCityImage' %}",
+              "state": "{{ randomCidade }}",
+              "description": "Aquário com total acessibilidade para cadeirantes, painéis táteis em Braille e monitores especializados em Libras e TEA.",
+              "price": {{ randomPrecoInt }} ,
+              "main_image": "{% faker 'randomCityImage' %}",
+              "has_access_ramp": {{ randomBit }},
+              "has_adapted_bathroom": {{ randomBit }},
+              "allows_guide_dog": {{ randomBit }},
+              "has_braille_signage": {{ randomBit }},
+              "has_sign_language_interpreter": {{ randomBit }},
+              "has_asd_friendly_space": {{ randomBit }}
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_eb20f0bc69f14e7aadad25fb6c690c47',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        scripts:
+          preRequest: >-
+            const bit = Math.round(Math.random());
+
+            const randInt = (min, max) => Math.floor(Math.random() * (max - min
+            + 1)) + min;
+
+            const randDec = (min, max, casas = 2) =>
+              (Math.random() * (max - min) + min).toFixed(casas);
+
+            // sorteia um item de qualquer array
+
+            const randItem = (lista) => lista[Math.floor(Math.random() *
+            lista.length)];
+
+
+            const CATEGORIAS = [
+              'ACCOMMODATION',
+              'GASTRONOMY',
+              'TOURIST_ATTRACTION',
+              'OTHERS'
+            ];
+
+
+            const STATES = [
+              'sp',
+              'RJ',
+              'PR',
+              'SC',
+            	'MG',
+            	'MT',
+            	'MS'
+            ];
+
+
+
+            insomnia.environment.set('randomBit', bit);
+
+            insomnia.environment.set('randomPreco', randDec(100, 500, 2));
+
+            insomnia.environment.set('randomCategoria', randItem(CATEGORIAS));
+
+            insomnia.environment.set('randomCidade', randItem(STATES));
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places/{{ _.place_id }}"
+        name: 3.6 Excluir Estabelecimento (Exclusivo BUSINESS)
+        meta:
+          id: req_c86e3aac1f7e4f4192888a0dbe232be0
+          created: 1724926500000
+          modified: 1788001577046
+          isPrivate: false
+          description: Exclui um local do proprietário logado.
+          sortKey: 406
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_eb20f0bc69f14e7aadad25fb6c690c47',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places?page={% prompt 'AccessTripDB', 'Qual página quer
+          listas?', '1', '', false, true %}&limit={% prompt 'AccessTripDB',
+          'Quantos itens por página', '5', '', false, true %}"
+        name: 3.1 Listar Todos os Locais - Por página
+        meta:
+          id: req_5516c02b8eac49df87d89a5a853e0001
+          created: 1788000482796
+          modified: 1788000571569
+          isPrivate: false
+          description: Listagem pública com cálculo de média de avaliações e total de
+            reviews.
+          sortKey: 401.5
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/places"
+        name: 3.2 Listar com Filtros de Acessibilidade - Por Página
+        meta:
+          id: req_c6928b09906146858128b45b0b40bd15
+          created: 1788000640318
+          modified: 1788000813393
+          isPrivate: false
+          description: Filtros por categoria, cidade, rampa, banheiro adaptado, cão-guia,
+            Libras, TEA e ordenação por melhor avaliação.
+          sortKey: 402.5
+        method: GET
+        parameters:
+          - name: category
+            value: GASTRONOMY
+            disabled: true
+          - name: city
+            value: São Paulo
+            disabled: true
+          - name: has_access_ramp
+            value: "1"
+            disabled: true
+          - name: has_adapted_bathroom
+            value: "1"
+            disabled: true
+          - name: has_asd_friendly_space
+            value: "1"
+            disabled: true
+          - name: has_sign_language_interpreter
+            value: "1"
+            description: ""
+            disabled: false
+          - name: has_asd_friendly_space integer
+            value: "1"
+            description: ""
+            disabled: true
+          - name: sort_by
+            value: rating_desc
+            disabled: true
+          - name: page
+            value: "{% prompt 'AccessTripDB', 'Página que quer Exibir?', '1', '', false,
+              true %}"
+            description: ""
+            disabled: false
+          - name: limit
+            value: "{% prompt 'AccessTripDB', 'Quantos itens por página quer exibir', '5',
+              '', false, true %}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 0. Status & Health
+    meta:
+      id: fld_7fedc07d32094117b5dde38ab4602ca8
+      created: 1724926500000
+      modified: 1724926500000
+      sortKey: 100
+      description: Verificação de disponibilidade do servidor
+    children:
+      - url: "{{ _.base_url }}/health"
+        name: Health Check
+        meta:
+          id: req_a55f72de0f7545edbdbb1006b37a90f0
+          created: 1724926500000
+          modified: 1724926500000
+          isPrivate: false
+          description: Retorna o status da API
+          sortKey: 100
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 5. Business Dashboard (Web)
+    meta:
+      id: fld_9138c6fbec5e47f8b0578967497dd3e8
+      created: 1724926500000
+      modified: 1724926500000
+      sortKey: 600
+      description: Painel de controle, relatórios e métricas do estabelecimento
+    children:
+      - url: "{{ _.base_url }}/business/stats"
+        name: 5.2 Métricas Consolidadas do Dashboard
+        meta:
+          id: req_0355e089af294883a2782435b0df507c
+          created: 1724926500000
+          modified: 1788002225265
+          isPrivate: false
+          description: "Retorna indicadores chave: total de locais, total de reviews, nota
+            média agregada, respostas pendentes e últimas avaliações."
+          sortKey: 602
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_eb20f0bc69f14e7aadad25fb6c690c47',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/business/places"
+        name: 5.1 Meus Estabelecimentos & Alertas
+        meta:
+          id: req_1be4545c7151458e8863edcb48b53009
+          created: 1724926500000
+          modified: 1788002217586
+          isPrivate: false
+          description: Lista os locais da empresa logada com contagem de reviews e alerta
+            de respostas pendentes.
+          sortKey: 601
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_eb20f0bc69f14e7aadad25fb6c690c47',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 2. Perfil & Usuários
+    meta:
+      id: fld_fe0f5426b8ea4885b8d226dc1cf29572
+      created: 1724926500000
+      modified: 1724926500000
+      sortKey: 300
+      description: Consulta, atualização e upload de avatar do usuário logado
+    children:
+      - url: "{{ _.base_url }}/users/avatar"
+        name: 2.3 Upload Foto de Perfil (Multer)
+        meta:
+          id: req_9a247043771f45699a4f909d67d296a0
+          created: 1724926500000
+          modified: 1787999328868
+          isPrivate: false
+          description: Envia uma imagem no campo multipart 'avatar'.
+          sortKey: 303
+        method: POST
+        body:
+          mimeType: multipart/form-data
+          params:
+            - name: avatar
+              value: ""
+              fileName: C:\Users\Graziani Zanfolin\Downloads\imagens
+                comprimidas\evento-festa-junina.png
+              type: file
+        headers:
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_e3c283974ad8461082c274cc55dc08c5',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/profile"
+        name: 2.1 Obter Perfil
+        meta:
+          id: req_9be8da48874845dc98046a8d56649254
+          created: 1724926500000
+          modified: 1787999288554
+          isPrivate: false
+          description: Retorna perfil completo do usuário autenticado.
+          sortKey: 301
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_e3c283974ad8461082c274cc55dc08c5',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/profile"
+        name: 2.2 Atualizar Perfil
+        meta:
+          id: req_bdd95413d87e467fae6c8c8882254f0f
+          created: 1724926500000
+          modified: 1787999294523
+          isPrivate: false
+          description: Atualiza nome e dados do perfil.
+          sortKey: 302
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "full_name": "Viajante Aventureiro"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_e3c283974ad8461082c274cc55dc08c5',
+              'b64::JC50b2tlbg==::46b', 'never', 60 %}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_c028611f566f516462ef4dc326ebd611b1240ee7
+    created: 1787998265242
+    modified: 1788002032503
+environments:
+  name: Base Environment
+  meta:
+    id: env_16875e1563374c90ab740e8aaacb022c
+    created: 1724926500000
+    modified: 1788002032506
+    isPrivate: false
+  data:
+    base_url: http://localhost:3000/api
+    token_business: ""
+    token_traveler: ""
+    place_id: 1
+    review_id: 1
+    randomBit: 0
+    randomPreco: "435.76"
+    randomPrecoInt: 273
+    randomCategoria: ACCOMMODATION
+    randomCidade: MS
+    randomAvaliacao: 4
+    randomNivelAcessibilidade: POOR
+  color: "#2b6cb0"

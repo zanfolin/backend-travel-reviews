@@ -84,8 +84,13 @@ export async function listPlaces(req, res, next) {
     ];
 
     accessibilityFields.forEach(({ param, field }) => {
-      if (param === '1' || param === 'true' || param === true || param === 1) {
-        query = query.where(`places.${field}`, 1);
+      if (param !== undefined && param !== null && param !== '') {
+        const strParam = String(param).toLowerCase().trim();
+        if (strParam === '1' || strParam === 'true') {
+          query = query.where(`places.${field}`, 1);
+        } else if (strParam === '0' || strParam === 'false') {
+          query = query.where(`places.${field}`, 0);
+        }
       }
     });
 

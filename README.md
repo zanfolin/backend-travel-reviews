@@ -15,6 +15,7 @@ Desenvolvido em **Node.js 24+**, utilizando **SQLite3** embutido gerenciado via 
 - [Instalação e Configuração](#-instalação-e-configuração)
 - [Banco de Dados: Migrations, Seeds e Triggers](#-banco-de-dados-migrations-seeds-e-triggers)
 - [Execução da Aplicação](#-execução-da-aplicação)
+- [Testes de Rotas com Insomnia](#-testes-de-rotas-com-insomnia)
 - [Documentação das Rotas da API](#-documentação-das-rotas-da-api)
 - [Segurança e Tratamento de Erros](#-segurança-e-tratamento-de-erros)
 - [Licença](#-licença)
@@ -209,6 +210,31 @@ npm start
 ```
 
 O servidor estará disponível em `http://localhost:3000`.
+
+---
+
+## 🧪 Testes de Rotas com Insomnia
+
+O projeto inclui o arquivo [insomnia_collection.json](insomnia_collection.json) pronto para importação no **Insomnia REST Client**.
+
+### Como Importar
+
+1. Abra o **Insomnia**.
+2. Clique no menu de **Preferences / Settings** ou no botão **Create / Import** na tela inicial.
+3. Selecione **Import from File** e escolha o arquivo `insomnia_collection.json` presente na raiz deste projeto.
+4. O workspace **AccessTrip API** será importado com todas as rotas organizadas em pastas:
+   - `0. Status & Health`
+   - `1. Autenticação & Verificação` (Cadastro, verificação de e-mail com 4 dígitos, login de Traveler e Business)
+   - `2. Perfil & Usuários` (Consulta de perfil, edição e upload de avatar)
+   - `3. Locais & Acessibilidade` (Listagens, filtros avançados de TEA/Libras/Rampas, CRUD exclusivo Business)
+   - `4. Avaliações (Reviews)` (Criar avaliação Traveler, editar, remover e resposta Business)
+   - `5. Business Dashboard (Web)` (Métricas consolidadas e locais com reviews pendentes)
+5. **Variáveis de Ambiente Pré-configuradas**:
+   - `base_url`: `http://localhost:3000/api`
+   - `token_business`: Token JWT gerado no login da empresa (`admin@admin.com`)
+   - `token_traveler`: Token JWT gerado no login do viajante (`traveler@traveler.com`)
+   - `place_id`: ID de local de teste (padrão: `1`)
+   - `review_id`: ID de avaliação de teste (padrão: `1`)
 
 ---
 
