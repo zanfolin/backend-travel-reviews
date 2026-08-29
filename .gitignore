@@ -1,0 +1,14 @@
+node_modules/
+.env
+uploads/*
+!uploads/.gitkeep
+!uploads/avatars/
+!uploads/places/
+uploads/avatars/*
+!uploads/avatars/.gitkeep
+uploads/places/*
+!uploads/places/.gitkeep
+*.sqlite
+*.sqlite3
+*.db
+.DS_Store

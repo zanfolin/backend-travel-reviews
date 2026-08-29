@@ -27,6 +27,11 @@ Enum accessibility_level_enum {
     de verificação é removido do banco de dados, depois disso o usuário pode acessar a plataforma mobile e web.
 */
 
+/*
+  Existe uma falha lógica que um negócio pode criar vários viajantes para avaliar o negócio, em implementação
+  futura pode ser resolvido com alguma técnica de verificação de identidade. 
+*/
+
 Table users {
   id integer [pk, increment]
   full_name text [note: 'Nome completo do usuário - preenchimento depois do cadastro']

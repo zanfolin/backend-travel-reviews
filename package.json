@@ -1,0 +1,41 @@
+{
+  "name": "backend-travel-reviews",
+  "version": "1.0.0",
+  "description": "Backend para plataforma de turismo acessível AccessTrip (Node 24+, Express, Knex, SQLite3, JWT, Multer, Nodemailer)",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
+    "seed": "knex seed:run",
+    "db:reset": "knex migrate:rollback --all && knex migrate:latest && knex seed:run"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "sqlite3",
+    "knex",
+    "jwt",
+    "multer",
+    "nodemailer",
+    "accessibility",
+    "travel-reviews"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.0",
+    "sqlite3": "^5.1.7"
+  }
+}
